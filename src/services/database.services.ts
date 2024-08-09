@@ -1,7 +1,9 @@
 import { error } from 'console';
+import { config } from 'dotenv';
 import { Collection, Db, MongoClient, ServerApiVersion } from 'mongodb';
+import RefreshToken from '~/models/schemas/RefreshToken.schema';
 import User from '~/models/schemas/User.schema';
-require('dotenv').config();
+config();
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.rzqxfxp.mongodb.net`;
 
 class DatabaseService {
@@ -25,6 +27,10 @@ class DatabaseService {
 
   get users(): Collection<User> {
     return this.db.collection(process.env.DB_USER_COLLECTION as string);
+  }
+
+  get refreshTokens(): Collection<RefreshToken> {
+    return this.db.collection(process.env.DB_REFRESH_TOKEN_COLLECTION as string);
   }
 }
 
