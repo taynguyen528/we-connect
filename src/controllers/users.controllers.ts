@@ -4,23 +4,29 @@ import { UserVerifyStatus } from '~/constants/enum';
 import HTTP_STATUS from '~/constants/httpStatus';
 import { USERS_MESSAGES } from '~/constants/messages';
 import {
+  ChangePasswordRequestBody,
+  FollowRequestBody,
   ForgotPasswordRequestBody,
+  GetProfileRequestParams,
   LoginRequestBody,
   LogoutReqBody,
   RegisterRequestBody,
   ResetPasswordRequestBody,
   TokenPayload,
+  UnFollowRequestParams,
+  UpdateMeRequestBody,
   VerifyEmailRequestBody,
   VerifyForgotPasswordRequestBody
 } from '~/models/request/User.requests';
 import User from '~/models/schemas/User.schema';
 import databaseService from '~/services/database.services';
 import usersService from '~/services/users.services';
+import { ParamsDictionary } from 'express-serve-static-core';
 
-export const loginController = async (req: Request<{}, {}, LoginRequestBody>, res: Response) => {
+export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User;
   const user_id = user._id as ObjectId;
-  const result = await usersService.login(user_id.toString());
+  const result = await usersService.login({ user_id: user_id.toString(), verify: user.verify });
   return res.json({
     message: USERS_MESSAGES.LOGIN_SUCCESS,
     result
@@ -28,7 +34,7 @@ export const loginController = async (req: Request<{}, {}, LoginRequestBody>, re
 };
 
 export const registerController = async (
-  req: Request<{}, {}, RegisterRequestBody>,
+  req: Request<ParamsDictionary, any, RegisterRequestBody>,
   res: Response,
   next: NextFunction
 ) => {
@@ -46,7 +52,7 @@ export const logoutController = async (req: Request<{}, {}, LogoutReqBody>, res:
 };
 
 export const verifyEmailController = async (
-  req: Request<{}, {}, VerifyEmailRequestBody>,
+  req: Request<ParamsDictionary, any, VerifyEmailRequestBody>,
   res: Response,
   next: NextFunction
 ) => {
@@ -93,17 +99,17 @@ export const resendVerifyEmailController = async (req: Request, res: Response, n
 };
 
 export const forgotPasswordController = async (
-  req: Request<{}, {}, ForgotPasswordRequestBody>,
+  req: Request<ParamsDictionary, any, ForgotPasswordRequestBody>,
   res: Response,
   next: NextFunction
 ) => {
-  const { _id } = req.user as User;
-  const result = await usersService.forgotPassword((_id as ObjectId)?.toString());
+  const { _id, verify } = req.user as User;
+  const result = await usersService.forgotPassword({ user_id: (_id as ObjectId)?.toString(), verify });
   return res.json(result);
 };
 
 export const verifyForgotPasswordController = async (
-  req: Request<{}, {}, VerifyForgotPasswordRequestBody>,
+  req: Request<ParamsDictionary, any, VerifyForgotPasswordRequestBody>,
   res: Response,
   next: NextFunction
 ) => {
@@ -113,12 +119,77 @@ export const verifyForgotPasswordController = async (
 };
 
 export const resetPasswordController = async (
-  req: Request<{}, {}, ResetPasswordRequestBody>,
+  req: Request<ParamsDictionary, any, ResetPasswordRequestBody>,
   res: Response,
   next: NextFunction
 ) => {
   const { user_id } = req.decode_forgot_password_token as TokenPayload;
   const { password } = req.body;
   const result = await usersService.resetPassword(user_id, password);
+  return res.json(result);
+};
+
+export const getMeController = async (req: Request, res: Response, next: NextFunction) => {
+  const { user_id } = req.decode_authorization as TokenPayload;
+  const user = await usersService.getMe(user_id);
+  return res.json({
+    message: USERS_MESSAGES.GET_MY_PROFILE_SUCCESS,
+    result: user
+  });
+};
+
+export const updateMeController = async (
+  req: Request<{}, {}, UpdateMeRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayload;
+  const { body } = req;
+  const user = await usersService.updateMe(user_id, body);
+  return res.json({
+    message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+    result: user
+  });
+};
+
+export const getProfileController = async (req: Request, res: Response, next: NextFunction) => {
+  const { username } = req.params;
+  const user = await usersService.getProfile(username);
+  return res.json({
+    message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
+    result: user
+  });
+};
+
+export const followController = async (
+  req: Request<ParamsDictionary, any, FollowRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayload;
+  const { followed_user_id } = req.body;
+  const result = await usersService.follow(user_id, followed_user_id);
+  return res.json(result);
+};
+
+export const unFollowController = async (
+  req: Request<ParamsDictionary, any, UnFollowRequestParams>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayload;
+  const { user_id: followed_user_id } = req.params;
+  const result = await usersService.unFollow(user_id, followed_user_id);
+  return res.json(result);
+};
+
+export const changePasswordController = async (
+  req: Request<ParamsDictionary, any, ChangePasswordRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayload;
+  const { password } = req.body;
+  const result = await usersService.changePassword(user_id, password);
   return res.json(result);
 };
