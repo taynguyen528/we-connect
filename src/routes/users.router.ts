@@ -13,7 +13,8 @@ import {
   followController,
   getProfileController,
   unFollowController,
-  changePasswordController
+  changePasswordController,
+  oauthController
 } from '~/controllers/users.controllers';
 import { filterMiddleware } from '~/middlewares/common.middlewares';
 import {
@@ -39,6 +40,12 @@ const usersRouter = Router();
 usersRouter.post('/login', loginValidator, wrapRequestHandler(loginController));
 /*
   body: {email: string, password: string}
+*/
+
+usersRouter.get('/oauth/google', wrapRequestHandler(oauthController));
+/*
+  OAuth with google
+  Query: {code: string}
 */
 
 usersRouter.post('/register', registerValidator, wrapRequestHandler(registerController));
