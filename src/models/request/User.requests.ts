@@ -11,7 +11,7 @@ export interface RegisterRequestBody {
   email: string;
   password: string;
   confirm_password: string;
-  day_of_birth: string;
+  date_of_birth: string;
 }
 
 export interface VerifyEmailRequestBody {
