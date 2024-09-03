@@ -7,6 +7,7 @@ import { initFolder } from './utils/file';
 import { config } from 'dotenv';
 import staticRouter from './routes/static.router';
 import { UPLOAD_VIDEO_DIR } from './constants/dir';
+import cors from 'cors';
 
 config();
 
@@ -20,6 +21,7 @@ const port = process.env.PORT || 4000;
 initFolder();
 
 app.use(express.json());
+app.use(cors());
 
 app.use('/users', usersRouter);
 app.use('/medias', mediasRouter);

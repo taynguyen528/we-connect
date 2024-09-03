@@ -14,7 +14,8 @@ import {
   getProfileController,
   unFollowController,
   changePasswordController,
-  oauthController
+  oauthController,
+  refreshTokenController
 } from '~/controllers/users.controllers';
 import { filterMiddleware } from '~/middlewares/common.middlewares';
 import {
@@ -56,6 +57,11 @@ usersRouter.post('/register', registerValidator, wrapRequestHandler(registerCont
 usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController));
 /* 
   header: {Authorization: Bearer <access_token>}
+  body : {refresh_token: string}
+*/
+
+usersRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController));
+/* 
   body : {refresh_token: string}
 */
 

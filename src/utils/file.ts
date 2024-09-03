@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import { File } from 'formidable';
 import fs from 'fs';
+import path from 'path';
 import { UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_DIR, UPLOAD_VIDEO_TEMP_DIR } from '~/constants/dir';
 
 export const initFolder = () => {
@@ -49,8 +50,15 @@ export const handleUploadImage = async (req: Request) => {
 
 export const handleUploadVideo = async (req: Request): Promise<File[]> => {
   const formidable = (await import('formidable')).default;
+  const nanoid = (await import('nanoid')).nanoid;
+
+  const idName = nanoid();
+
+  const folderPath = path.resolve(UPLOAD_VIDEO_DIR, idName);
+  fs.mkdirSync(folderPath);
+
   const form = formidable({
-    uploadDir: UPLOAD_VIDEO_DIR,
+    uploadDir: path.resolve(UPLOAD_VIDEO_DIR, idName),
     maxFiles: 1,
     keepExtensions: true,
     maxFileSize: 60 * 1024 * 1024,
@@ -61,6 +69,9 @@ export const handleUploadVideo = async (req: Request): Promise<File[]> => {
       }
 
       return valid;
+    },
+    filename: function (filename, ext) {
+      return idName + ext;
     }
   });
 

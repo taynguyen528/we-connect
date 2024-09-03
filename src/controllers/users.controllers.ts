@@ -10,6 +10,7 @@ import {
   GetProfileRequestParams,
   LoginRequestBody,
   LogoutReqBody,
+  RefreshTokenReqBody,
   RegisterRequestBody,
   ResetPasswordRequestBody,
   TokenPayload,
@@ -47,10 +48,24 @@ export const registerController = async (
   });
 };
 
-export const logoutController = async (req: Request<{}, {}, LogoutReqBody>, res: Response) => {
+export const logoutController = async (req: Request<ParamsDictionary, {}, LogoutReqBody>, res: Response) => {
   const { refresh_token } = req.body;
   const result = await usersService.logout(refresh_token);
   return res.json(result);
+};
+
+export const refreshTokenController = async (
+  req: Request<ParamsDictionary, {}, RefreshTokenReqBody>,
+  res: Response
+) => {
+  const { refresh_token } = req.body;
+  const { user_id, verify } = req.decode_refresh_token as TokenPayload;
+  const result = await usersService.refreshToken({ user_id, verify, refresh_token });
+
+  return res.json({
+    message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+    result
+  });
 };
 
 export const verifyEmailController = async (
