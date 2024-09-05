@@ -12,7 +12,9 @@ import cors from 'cors';
 config();
 
 const app = express();
-databaseService.connect();
+databaseService.connect().then(() => {
+  databaseService.indexUser();
+});
 
 const router = Router();
 const port = process.env.PORT || 4000;
