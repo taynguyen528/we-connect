@@ -1,13 +1,14 @@
 import express, { Router } from 'express';
-import usersRouter from './routes/users.router';
+import usersRouter from './routes/users.routes';
 import databaseService from './services/database.services';
 import { defaultErrorHandler } from './middlewares/error.middlewares';
-import mediasRouter from './routes/medias.router';
+import mediasRouter from './routes/medias.routes';
 import { initFolder } from './utils/file';
 import { config } from 'dotenv';
-import staticRouter from './routes/static.router';
+import staticRouter from './routes/static.routes';
 import { UPLOAD_VIDEO_DIR } from './constants/dir';
 import cors from 'cors';
+import tweetsRouter from './routes/tweets.routes';
 
 config();
 
@@ -28,6 +29,8 @@ app.use(cors());
 app.use('/users', usersRouter);
 app.use('/medias', mediasRouter);
 app.use('/static', staticRouter);
+app.use('/tweets', tweetsRouter);
+
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR));
 
 app.listen(port, () => {

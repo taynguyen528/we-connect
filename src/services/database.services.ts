@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import { Collection, Db, MongoClient, ServerApiVersion } from 'mongodb';
 import Follower from '~/models/schemas/Follower.schma';
 import RefreshToken from '~/models/schemas/RefreshToken.schema';
+import Tweet from '~/models/schemas/Twitter.schmea';
 import User from '~/models/schemas/User.schema';
 import VideoStatus from '~/models/schemas/VideoStatus.schema';
 config();
@@ -35,6 +36,10 @@ class DatabaseService {
 
   get users(): Collection<User> {
     return this.db.collection(process.env.DB_USER_COLLECTION as string);
+  }
+
+  get tweets(): Collection<Tweet> {
+    return this.db.collection(process.env.DB_TWEETS_COLLECTION as string);
   }
 
   get refreshTokens(): Collection<RefreshToken> {

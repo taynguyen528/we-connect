@@ -7,7 +7,6 @@ import {
   ChangePasswordRequestBody,
   FollowRequestBody,
   ForgotPasswordRequestBody,
-  GetProfileRequestParams,
   LoginRequestBody,
   LogoutReqBody,
   RefreshTokenReqBody,
