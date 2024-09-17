@@ -9,6 +9,7 @@ import staticRouter from './routes/static.routes';
 import { UPLOAD_VIDEO_DIR } from './constants/dir';
 import cors from 'cors';
 import tweetsRouter from './routes/tweets.routes';
+import bookmarksRouter from './routes/bookmarks.routes';
 
 config();
 
@@ -29,6 +30,7 @@ app.use(cors());
 app.use('/users', usersRouter);
 app.use('/medias', mediasRouter);
 app.use('/static', staticRouter);
+app.use('/bookmarks', bookmarksRouter);
 app.use('/tweets', tweetsRouter);
 
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR));

@@ -1,9 +1,11 @@
 import { error } from 'console';
 import { config } from 'dotenv';
 import { Collection, Db, MongoClient, ServerApiVersion } from 'mongodb';
-import Follower from '~/models/schemas/Follower.schma';
+import Bookmark from '~/models/schemas/Bookmark.schema';
+import Follower from '~/models/schemas/Follower.schema';
+import Hashtag from '~/models/schemas/Hashtag.schema';
 import RefreshToken from '~/models/schemas/RefreshToken.schema';
-import Tweet from '~/models/schemas/Twitter.schmea';
+import Tweet from '~/models/schemas/Twitter.schema';
 import User from '~/models/schemas/User.schema';
 import VideoStatus from '~/models/schemas/VideoStatus.schema';
 config();
@@ -52,6 +54,14 @@ class DatabaseService {
 
   get videoStatus(): Collection<VideoStatus> {
     return this.db.collection(process.env.DB_VIDEO_STATUS_COLLECTION as string);
+  }
+
+  get hashtags(): Collection<Hashtag> {
+    return this.db.collection(process.env.DB_HASHTAGS_COLLECTION as string);
+  }
+
+  get bookmarks(): Collection<Bookmark> {
+    return this.db.collection(process.env.DB_BOOKMARKS_COLLECTION as string);
   }
 }
 

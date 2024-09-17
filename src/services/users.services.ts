@@ -10,7 +10,7 @@ import { config } from 'dotenv';
 import { USERS_MESSAGES } from '~/constants/messages';
 import { ErrorWithStatus } from '~/models/Error';
 import HTTP_STATUS from '~/constants/httpStatus';
-import Follower from '~/models/schemas/Follower.schma';
+import Follower from '~/models/schemas/Follower.schema';
 import axios from 'axios';
 config();
 
