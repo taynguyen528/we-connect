@@ -130,7 +130,7 @@ export const tweetIdValidator = validate(
               .aggregate<Tweet>([
                 {
                   $match: {
-                    _id: new ObjectId('66ef1cb0026603615c15d5a3')
+                    _id: new ObjectId(value)
                   }
                 },
                 {
@@ -163,7 +163,7 @@ export const tweetIdValidator = validate(
                           input: { $ifNull: ['$tweet_children', []] },
                           as: 'item',
                           cond: {
-                            $eq: ['$$item.type', 1]
+                            $eq: ['$$item.type', TweetType.Retweet]
                           }
                         }
                       }
@@ -174,7 +174,7 @@ export const tweetIdValidator = validate(
                           input: { $ifNull: ['$tweet_children', []] },
                           as: 'item',
                           cond: {
-                            $eq: ['$$item.type', 2]
+                            $eq: ['$$item.type', TweetType.Comment]
                           }
                         }
                       }
@@ -185,7 +185,7 @@ export const tweetIdValidator = validate(
                           input: { $ifNull: ['$tweet_children', []] },
                           as: 'item',
                           cond: {
-                            $eq: ['$$item.type', 3]
+                            $eq: ['$$item.type', TweetType.QuoteTweet]
                           }
                         }
                       }
@@ -200,7 +200,7 @@ export const tweetIdValidator = validate(
               ])
               .toArray();
 
-            console.log('tweet: ', tweet);
+            // console.log('tweet: ', tweet);
 
             if (!tweet) {
               throw new ErrorWithStatus({ status: HTTP_STATUS.NOT_FOUND, message: TWEETS_MESSAGES.TWEET_NOT_FOUND });
@@ -259,3 +259,46 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
   }
   next();
 });
+
+export const getTweetChildrenValidator = validate(
+  checkSchema(
+    {
+      tweet_type: {
+        isIn: {
+          options: [tweetTypes],
+          errorMessage: TWEETS_MESSAGES.INVALID_TYPE
+        }
+      }
+    },
+    ['query']
+  )
+);
+
+export const paginationValidator = validate(
+  checkSchema({
+    limit: {
+      isNumeric: true,
+      custom: {
+        options: async (value, { req }) => {
+          const num = Number(value);
+          if (num > 100 || num < 1) {
+            throw new Error('1 <= limit <= 100 ');
+          }
+          return true;
+        }
+      }
+    },
+    page: {
+      isNumeric: true,
+      custom: {
+        options: async (value, { req }) => {
+          const num = Number(value);
+          if (num < 1) {
+            throw new Error('page >=1');
+          }
+          return true;
+        }
+      }
+    }
+  })
+);

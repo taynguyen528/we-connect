@@ -10,6 +10,7 @@ import { UPLOAD_VIDEO_DIR } from './constants/dir';
 import cors from 'cors';
 import tweetsRouter from './routes/tweets.routes';
 import bookmarksRouter from './routes/bookmarks.routes';
+// import '~/utils/fake';
 
 config();
 
