@@ -10,7 +10,6 @@ import {
 import {
   accessTokenValidator,
   isUserLoggedValidator,
-  loginValidator,
   verifyUserValidator
 } from '~/middlewares/users.middlewares';
 import { wrapRequestHandler } from '~/utils/handlers';

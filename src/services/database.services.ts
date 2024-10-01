@@ -36,6 +36,34 @@ class DatabaseService {
     this.users.createIndex({ username: 1 }, { unique: true });
   }
 
+  async indexVideoStatus() {
+    const exists = await this.videoStatus.indexExists(['video_id_1_status_1']);
+    if (!exists) {
+      this.videoStatus.createIndex({ video_id: 1, status: 1 });
+    }
+  }
+
+  async indexRefreshTokens() {
+    const exists = await this.refreshTokens.indexExists(['token_1_user_id_1']);
+    if (!exists) {
+      this.refreshTokens.createIndex({ token: 1, user_id: 1 });
+    }
+  }
+
+  async indexFollowers() {
+    const exits = await this.followers.indexExists(['user_id_1_followed_user_id_1']);
+    if (!exits) {
+      this.followers.createIndex({ user_id: 1, followed_user_id: 1 });
+    }
+  }
+
+  async indexTweets() {
+    const exists = await this.tweets.indexExists(['content_text']);
+    if (!exists) {
+      this.tweets.createIndex({ content: 'text' }, { default_language: 'none' });
+    }
+  }
+
   get users(): Collection<User> {
     return this.db.collection(process.env.DB_USER_COLLECTION as string);
   }

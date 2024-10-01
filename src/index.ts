@@ -10,6 +10,8 @@ import { UPLOAD_VIDEO_DIR } from './constants/dir';
 import cors from 'cors';
 import tweetsRouter from './routes/tweets.routes';
 import bookmarksRouter from './routes/bookmarks.routes';
+import searchRouter from './routes/search.routes';
+import { MediaTypeQuery } from './constants/enum';
 // import '~/utils/fake';
 
 config();
@@ -17,6 +19,10 @@ config();
 const app = express();
 databaseService.connect().then(() => {
   databaseService.indexUser();
+  databaseService.indexFollowers();
+  databaseService.indexTweets();
+  databaseService.indexVideoStatus();
+  databaseService.indexRefreshTokens();
 });
 
 const router = Router();
@@ -31,6 +37,7 @@ app.use(cors());
 app.use('/users', usersRouter);
 app.use('/medias', mediasRouter);
 app.use('/static', staticRouter);
+app.use('/search', searchRouter);
 app.use('/bookmarks', bookmarksRouter);
 app.use('/tweets', tweetsRouter);
 
