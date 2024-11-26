@@ -569,3 +569,13 @@ export const changePasswordValidator = validate(
     confirm_password: confirmPasswordSchema
   })
 );
+
+export const isUserLoggedValidator = (middleware: (req: Request, res: Response, next: NextFunction) => void) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    // req.header vs req.headers (Phân biệt chữ hoa chữ thường)
+    if (req.headers.authorization) {
+      return middleware(req, res, next);
+    }
+    next();
+  };
+};
